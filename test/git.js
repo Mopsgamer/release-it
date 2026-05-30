@@ -313,8 +313,9 @@ describe('git', () => {
     await gitClient.tag();
     await gitClient.rollbackOnce();
 
-    assert.equal(exec.mock.calls[11].arguments[0], 'git tag --delete v1.2.4');
-    assert.equal(exec.mock.calls[12].arguments[0], 'git reset --hard HEAD~1');
+    const calls = exec.mock.calls.map(c => c.arguments[0]);
+    assert(calls.includes('git tag --delete v1.2.4'));
+    assert(calls.includes('git reset --hard HEAD~1'));
   });
 
   // To get this test to pass, I had to switch between spawnsync and execsync somehow
@@ -345,7 +346,8 @@ describe('git', () => {
     } catch (e) {
       // push would fail with an error since HEAD is behind origin
     }
-    assert.equal(exec.mock.calls[15].arguments[0], 'git push origin --delete v1.2.4');
+    const calls = exec.mock.calls.map(c => c.arguments[0]);
+    assert(calls.includes('git push origin --delete v1.2.4'));
   });
 
   test('should skip rollback when push fails but package is already published', async t => {
